@@ -27,14 +27,8 @@ class RoomModel(db.Model):
     def __repr__(self):
         return f"<Room {self.id}>"
 
-def get_room(id):
-    if id == None:
-        results = db.session.execute(db.select(RoomModel.id ,RoomModel.dist, RoomModel.addr, RoomModel.tele).order_by(RoomModel.id))
-    else:
-        results = RoomModel.query.filter_by(id=id).first()
-        if results == None:
-            return None
-        results = [results]
+def get_rooms():
+    results = db.session.execute(db.select(RoomModel.id ,RoomModel.dist, RoomModel.addr, RoomModel.tele).order_by(RoomModel.id))
 
     return results
 
@@ -57,9 +51,6 @@ def del_room(id, del_key):
     return None
 
 # controllers and api endpoints
-room_get_args = reqparse.RequestParser()
-room_get_args.add_argument("id", type=int, help="room id")
-
 room_post_args = reqparse.RequestParser()
 room_post_args.add_argument("id", type=int, help="room id required", required=True)
 room_post_args.add_argument("dist", type=int, help="distance required", required=True)
@@ -79,10 +70,7 @@ def mk_room_res(rooms):
 
 class Room(Resource):
     def get(self):
-        args = room_get_args.parse_args()
-        room = get_room(args["id"])
-        if room == None:
-            return {"error": "not found"}, 404
+        room = get_rooms()
         room = mk_room_res(room)
         return room
 
