@@ -30,6 +30,11 @@ def get_rooms():
     return results
 
 def add_room(id, dist, addr, tele, del_key):
+    id = int(id)
+    dist = int(dist)
+    addr = str(addr)
+    tele = int(tele)
+    del_key = int(del_key)
     room = RoomModel(id=id, dist=dist, addr=addr, tele=tele, del_key=del_key)
     db.session.add(room)
     db.session.commit()
