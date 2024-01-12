@@ -15,11 +15,11 @@ db = SQLAlchemy(app)
 
 # databes models
 class RoomModel(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    dist = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.String(64), primary_key=True)
+    dist = db.Column(db.String(64), nullable=False)
     addr = db.Column(db.String(512), nullable=False)
-    tele = db.Column(db.Integer, nullable=False)
-    del_key = db.Column(db.Integer, nullable=False)
+    tele = db.Column(db.String(64), nullable=False)
+    del_key = db.Column(db.String(64), nullable=False)
 
     def __repr__(self):
         return f"<Room {self.id}>"
@@ -30,11 +30,6 @@ def get_rooms():
     return results
 
 def add_room(id, dist, addr, tele, del_key):
-    id = int(id)
-    dist = int(dist)
-    addr = str(addr)
-    tele = int(tele)
-    del_key = int(del_key)
     room = RoomModel(id=id, dist=dist, addr=addr, tele=tele, del_key=del_key)
     db.session.add(room)
     db.session.commit()
@@ -54,15 +49,15 @@ def del_room(id, del_key):
 
 # controllers and api endpoints
 room_post_args = reqparse.RequestParser()
-room_post_args.add_argument("id", type=int, help="room id required", required=True)
-room_post_args.add_argument("dist", type=int, help="distance required", required=True)
+room_post_args.add_argument("id", type=str, help="room id required", required=True)
+room_post_args.add_argument("dist", type=str, help="distance required", required=True)
 room_post_args.add_argument("addr", type=str, help="room address required", required=True)
-room_post_args.add_argument("tele", type=int, help="telephone number required", required=True)
-room_post_args.add_argument("del_key", type=int, help="delete key required", required=True)
+room_post_args.add_argument("tele", type=str, help="telephone number required", required=True)
+room_post_args.add_argument("del_key", type=str, help="delete key required", required=True)
 
 room_delete_args = reqparse.RequestParser()
-room_delete_args.add_argument("id", type=int, help="room id required", required=True)
-room_delete_args.add_argument("del_key", type=int, help="delete key required", required=True)
+room_delete_args.add_argument("id", type=str, help="room id required", required=True)
+room_delete_args.add_argument("del_key", type=str, help="delete key required", required=True)
 
 def mk_room_res(rooms):
     room = {"room": []}
