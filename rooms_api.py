@@ -3,18 +3,12 @@ from flask import Flask
 from flask_restful import Api, Resource, reqparse
 from flask_sqlalchemy import SQLAlchemy
 
-# define paths
-app_dir_path = os.path.abspath(os.path.dirname(__file__))
-room_db_path = os.path.join(app_dir_path, 'rooms.db')
-
 # setup and init
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{room_db_path}"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URI")
 
 api = Api(app)
 db = SQLAlchemy(app)
-
 
 # databes models
 class RoomModel(db.Model):
@@ -90,11 +84,3 @@ class Room(Resource):
         return room
 
 api.add_resource(Room, "/room")
-
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-        db.drop_all()
-        db.create_all()
-
-    app.run()
