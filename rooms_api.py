@@ -19,7 +19,7 @@ class RoomModel(db.Model):
     dist = db.Column(db.Integer, nullable=False)
     addr = db.Column(db.String(512), nullable=False)
     tele = db.Column(db.Integer, nullable=False)
-    del_key = db.Column(db.String(32), nullable=False)
+    del_key = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return f"<Room {self.id}>"
