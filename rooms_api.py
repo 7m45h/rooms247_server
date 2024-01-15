@@ -40,7 +40,7 @@ def del_room(id, del_key):
     if room == None:
         return None
 
-    if room["del_key"] == del_key:
+    if room.del_key == del_key:
         db.session.delete(room)
         db.session.commit()
         return [room]
