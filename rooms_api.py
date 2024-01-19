@@ -40,7 +40,7 @@ def del_room(room_id, user_id):
     if room == None:
         return None
 
-    if room["user_id"] == user_id:
+    if room.user_id == user_id:
         db.session.delete(room)
         db.session.commit()
         return [ room ]
@@ -48,19 +48,14 @@ def del_room(room_id, user_id):
     return None
 
 # controllers and api endpoints
-room_get_args = reqparse.RequestParser()
-room_get_args.add_argument("user_id", type=str, help="user id required", required=True)
-
 room_post_args = reqparse.RequestParser()
 room_post_args.add_argument("room_id", type=str, help="room id required", required=True)
-room_post_args.add_argument("user_id", type=str, help="user id required", required=True)
 room_post_args.add_argument("dist", type=str, help="distance required", required=True)
 room_post_args.add_argument("addr", type=str, help="room address required", required=True)
 room_post_args.add_argument("tele", type=str, help="telephone number required", required=True)
 
 room_delete_args = reqparse.RequestParser()
 room_delete_args.add_argument("room_id", type=str, help="room id required", required=True)
-room_delete_args.add_argument("user_id", type=str, help="user id required", required=True)
 
 def mk_room_res(rooms, user_id):
     room = {"room": []}
@@ -69,25 +64,24 @@ def mk_room_res(rooms, user_id):
     return room
 
 class Room(Resource):
-    def get(self):
-        args = room_get_args.parse_args()
+    def get(self, user_id):
         room = get_rooms()
-        room = mk_room_res(room, args["user_id"])
+        room = mk_room_res(room, user_id)
         return room
 
-    def post(self):
+    def post(self, user_id):
         args = room_post_args.parse_args()
-        room = add_room(args["room_id"], args["user_id"], args["dist"], args["addr"], args["tele"])
-        room = mk_room_res(room, args["user_id"])
+        room = add_room(args["room_id"], user_id, args["dist"], args["addr"], args["tele"])
+        room = mk_room_res(room, user_id)
         return room, 201
 
-    def delete(self):
+    def delete(self, user_id):
         args = room_delete_args.parse_args()
-        room = del_room(args["room_id"], args["user_id"])
+        room = del_room(args["room_id"], user_id)
         if room == None:
             return {"error": "not found"}, 404
 
-        room = mk_room_res(room)
+        room = mk_room_res(room, user_id)
         return room
 
-api.add_resource(Room, "/room")
+api.add_resource(Room, "/room/<user_id>")
